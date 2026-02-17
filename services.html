@@ -10,7 +10,7 @@
 <body>
 
     <!-- nav bar -->
-     <nav class="navbar navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
+     <nav class="navbar fixed-top navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Navbar</a>
         </div>
@@ -30,7 +30,7 @@
     </nav>
      <!-- nav bar end -->
 
-    <form style="background-color: rgb(227, 235, 241); margin: 32px; padding: 32px 24px;">
+    <form style="background-color: rgb(227, 235, 241); margin: 96px 32px; padding: 32px 24px;">
             <h4> Add Service</h4>
             <div class="mb-3">
                 <label for="serviceNameInput" class="form-label" >Service Name</label>
@@ -44,26 +44,36 @@
         <p id="dataSaveActionResponse" style="color: green;"></p>
     </form>
 
-    <div>
-        <h4 style="padding: 10px 24px;" > Services List</h4>
+    <!-- Table to display services -->
+    <div style="margin: 96px 32px;">
+        <h4 > Services List</h4>
         <!-- services list -->
-    <table class="table table-striped" style="padding: 10px 24px;">
-        <thead>
-            <tr>
-                <th> Service Id</th>
-                <th> Service Name</th>
-                <th> Price </th>
-            </th>
-        </thead>
-        <tbody>
-            <tr>
-                <th>
+         <table class="table table-striped" style="padding: 10px 24px;">
+            <thead>
+                <tr>
+                    <th> Service Id</th>
+                    <th> Service Name</th>
+                    <th> Price </th>
+                    <th> Actions </th>
+                </tr>
+            </thead>
+            <tbody id="servicesListTableBody"> </tbody>
+        </table>
+    </div>
 
-                </th>
-            </tr>
+    <!-- Toast Message -->
+<div class="toast-container position-fixed" style="top: 80px; right: 80px; z-index: 1050;">
+    
+    <div id="deleteToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <!-- Added mb-0 to remove extra paragraph spacing -->
+                <p id="serviceDeleteAlert" class="mb-0"></p>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
 
-        </tbody>
-    </table>
 </div>
     
 
