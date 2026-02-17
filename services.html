@@ -30,7 +30,7 @@
     </nav>
      <!-- nav bar end -->
 
-    <form style="background-color: rgb(227, 235, 241); margin: 96px 32px; padding: 32px 24px;">
+    <form style="background-color: rgb(227, 235, 241); margin: 96px 32px; padding: 32px 24px;" onsubmit="addService(); return false;">
             <h4> Add Service</h4>
             <div class="mb-3">
                 <label for="serviceNameInput" class="form-label" >Service Name</label>
@@ -40,7 +40,7 @@
                 <label for="servicePriceInput"  class="form-label">Price</label>
                 <input class="form-control" id="servicePriceInput" type="number" placeholder="Enter price">
             </div>
-        <button class="btn btn-primary" type="submit" class="btn btn-primary" onclick="addService(); return false;">Add Service</button>
+        <button class="btn btn-primary" type="submit" class="btn btn-primary">Add Service</button>
         <p id="dataSaveActionResponse" style="color: green;"></p>
     </form>
 

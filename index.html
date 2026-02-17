@@ -8,7 +8,7 @@
 </head>
 <body>
     <!-- nav bar -->
-     <nav class="navbar navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
+     <nav class="navbar fixed-top navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Navbar</a>
         </div>
@@ -28,8 +28,56 @@
     </nav>
      <!-- nav bar end -->
 
+<!-- invoice creation form -->
+<form style="background-color: rgb(227, 235, 241); margin: 96px 32px; padding: 32px 24px;" onsubmit="createInvoice()">
+    <div class="row">
+        <div>
+            <h4>Create New Invoice</h4>
+    </div>
+    <div style=" margin-top: 24px; " class="row">
+        <div class="form-group col-md-4">
+        <label for="billingName">Customer Name</label>
+        <input type="text" class="form-control" id="customerName" placeholder="Enter Customer Name">
+    </div>
+    <div class="form-group col-md-4">
+        <label for="mobileNumber">Mobile Number</label>
+        <input type="number" class="form-control" id="mobileNumber" placeholder="Enter mobile number">
+    </div>
+    <div class="form-group col-md-4">
+        <label for="eventType">Event Type</label>
+        <input type="text" class="form-control" id="eventType" placeholder="Enter type of event">
+    </div>
+    </div>
 
-    <h4 style="padding: 10px 24px;" > Create Invoice</h4>
+    <div style=" margin-top: 24px; " class="row">
+        <div class="form-group col-md-4">
+        <label for="billingName">Event start date</label>
+        <input type="date" class="form-control" id="eventStartDate" placeholder="Select event start date">
+    </div>
+    <div class="form-group col-md-4">
+        <label for="mobileNumber">Event end date</label>
+        <input type="date" class="form-control" id="eventEndDate" placeholder="Select event end date">
+    </div>
+    <div class="form-group col-md-4">
+        <label for="eventAmount">Price</label>
+        <input type="number" class="form-control" id="eventAmount" placeholder="Enter Amount">
+    </div>
+    </div>
+
+    <div style=" margin-top: 24px; " class="row">
+        <div class="form-group col-md-12">
+            <label for="eventDiscount">Discount Amount</label>
+            <input type="number" class="form-control" id="eventDiscount" placeholder="Enter discount amount">
+        </div>
+
+    </div>
+
+    <div style=" margin-top: 24px; ">
+        <button type="submit" class="btn btn-primary">Save Invoice</button>
+    </div>
+    </div>
+    
+</form>
 
  
 

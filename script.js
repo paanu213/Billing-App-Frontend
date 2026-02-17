@@ -81,3 +81,22 @@ const deleteService = async (id)=>{
     }
     
 }
+
+
+//Invoice creation
+const createInvoice = async ()=>{
+    const event = {};
+    event.customerName = document.getElementById('customerName').value
+    event.mobileNumber = Number(document.getElementById('mobileNumber').value)
+    event.eventType = document.getElementById('eventType').value
+    event.eventStartDate = document.getElementById('eventStartDate').value
+    event.eventEndDate = document.getElementById('eventEndDate').value
+    event.eventAmount = document.getElementById('eventAmount').value
+    event.eventDiscount = document.getElementById('eventDiscount').value
+    try{
+        
+    }
+    catch(error){
+
+    }
+}
