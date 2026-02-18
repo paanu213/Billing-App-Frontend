@@ -8,9 +8,9 @@
 </head>
 <body>
     <!-- nav bar -->
-     <nav class="navbar navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
+     <nav class="navbar fixed-top navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">Billing Soft</a>
         </div>
             <div id="navbarNav">
                 <ul class="navbar-nav">
@@ -29,7 +29,27 @@
      <!-- nav bar end -->
 
 
-    <h4 style="padding: 10px 24px;" > Invoice List </h4>
+     <div style="margin: 96px 32px;">
+        <div>
+            <h4 > Invoice List </h4>
+        </div>
+        <table class="table table-striped" style="padding: 10px 24px;">
+            <thead>
+                <tr>
+                    <th>Sl.no</th>
+                    <th>Event Date</th>
+                    <th>Customer Name</th>
+                    <th>Mobile Number</th>
+                    <th>Billing Amount</th>
+                    <th>Pending</th>
+                    <th>status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceTableBody"> </tbody>
+        </table>
+     </div>
+
 
  
 

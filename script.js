@@ -1,11 +1,7 @@
-//const servicesList = []
-
-
 const addService = async ()=>{
     const service = {};
     service.name = document.getElementById('serviceNameInput').value
     service.price = Number(document.getElementById('servicePriceInput').value)
-    //servicesList.push(service)
 
     //send and save data to backend
     const response = await fetch('http://localhost:5000/services/add-service', {
@@ -14,6 +10,7 @@ const addService = async ()=>{
         body: JSON.stringify(service)
     })
 
+    //after saving service, we are showing a successfull message in <p> tag text below the button
     const dataSaveActionResponse = document.getElementById('dataSaveActionResponse')
     dataSaveActionResponse.innerText = await response.text()
 
@@ -87,16 +84,86 @@ const deleteService = async (id)=>{
 const createInvoice = async ()=>{
     const event = {};
     event.customerName = document.getElementById('customerName').value
-    event.mobileNumber = Number(document.getElementById('mobileNumber').value)
+    event.mobileNumber = document.getElementById('mobileNumber').value
     event.eventType = document.getElementById('eventType').value
     event.eventStartDate = document.getElementById('eventStartDate').value
     event.eventEndDate = document.getElementById('eventEndDate').value
-    event.eventAmount = document.getElementById('eventAmount').value
-    event.eventDiscount = document.getElementById('eventDiscount').value
+    event.eventAmount = Number(document.getElementById('eventAmount').value)
+    event.eventDiscount = Number(document.getElementById('eventDiscount').value)
+    event.advancePaid = Number(document.getElementById('advanceAmount').value)
     try{
-        
+        const response = await fetch ('http://localhost:5000/invoice/create-invoice', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(event)
+        })
     }
     catch(error){
+        console.error(`message: ${error}`)
+    }
+    console.log(event)
 
+    document.getElementById('customerName').value = ""
+    document.getElementById('mobileNumber').value = ""
+    document.getElementById('eventType').value = ""
+    document.getElementById('eventStartDate').value = ""
+    document.getElementById('eventEndDate').value = ""
+    document.getElementById('eventAmount').value = ""
+    document.getElementById('eventDiscount').value = ""
+    document.getElementById('advanceAmount').value = ""
+}
+
+//calculateAmounts function to display billing and pending amounts
+const calculateAmount = async ()=>{
+    eventAmount = Number(document.getElementById('eventAmount').value)
+    eventDiscount = Number(document.getElementById('eventDiscount').value)
+    advancePaid = Number(document.getElementById('advanceAmount').value)
+
+
+    const billingAmount = eventAmount - eventDiscount
+    const pendingAmount = billingAmount - advancePaid
+
+    const billingAmountcalc = document.getElementById('billingAmountcalc')
+    billingAmountcalc.innerText = `Billing Amount: ${billingAmount}`
+
+
+    const pendingAmountCalc = document.getElementById('pendingAmountCalc')
+    pendingAmountCalc.innerText = `Pending Amount: ${pendingAmount}`
+
+    getInvoiceList(id)
+}
+
+const getInvoiceList = async ()=>{
+    try{
+        const response = await fetch ('http://localhost:5000/invoice/invoice-list')
+
+        const invoiceList = await response.json()
+
+        //targetting table body and making the table data empty before showing, to avoid duplicates
+        const invoiceTableBody = document.getElementById('invoiceTableBody')
+        invoiceTableBody.innerHTML = ""
+
+        //create table rows and loop the data came from the api
+        invoiceList.forEach((invoice, index)=>{
+            const row = `
+            <tr>
+                <td>${index+1}</td>
+                <td>${new Date(invoice.eventStartDate).toLocaleDateString()}</td>
+                <td> ${invoice.customerName} </td>
+                <td> ${invoice.mobileNumber} </td>
+                <td> ${invoice.eventAmount} </td>
+                <td> ${invoice.pendingAmount} </td>
+                <td> ${invoice.finalAmountCleared} </td>
+                <td> <button type="button" class="btn btn-secondary btn-sm"> Edit </button>
+                <button type="button" class="btn btn-primary btn-sm"> View </button> </td>
+            </tr>`
+
+            invoiceTableBody.innerHTML += row
+        })
+    }
+    catch (error){
+        console.log(`there is an error: ${error}`)
     }
 }
+
+window.onload = getInvoiceList();

@@ -10,7 +10,7 @@
     <!-- nav bar -->
      <nav class="navbar fixed-top navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">Billing Soft</a>
         </div>
             <div id="navbarNav">
                 <ul class="navbar-nav">
@@ -29,7 +29,7 @@
      <!-- nav bar end -->
 
 <!-- invoice creation form -->
-<form style="background-color: rgb(227, 235, 241); margin: 96px 32px; padding: 32px 24px;" onsubmit="createInvoice()">
+<form style="background-color: rgb(227, 235, 241); margin: 96px 32px; padding: 32px 24px;" onsubmit="createInvoice(); return false">
     <div class="row">
         <div>
             <h4>Create New Invoice</h4>
@@ -60,16 +60,24 @@
     </div>
     <div class="form-group col-md-4">
         <label for="eventAmount">Price</label>
-        <input type="number" class="form-control" id="eventAmount" placeholder="Enter Amount">
+        <input type="number" class="form-control" id="eventAmount" placeholder="Enter Amount" oninput="calculateAmount()">
     </div>
     </div>
 
     <div style=" margin-top: 24px; " class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-4">
             <label for="eventDiscount">Discount Amount</label>
-            <input type="number" class="form-control" id="eventDiscount" placeholder="Enter discount amount">
+            <input type="number" class="form-control" id="eventDiscount" placeholder="Enter discount amount" oninput="calculateAmount()">
         </div>
+        <div class="form-group col-md-4">
+            <label for="advanceAmount">Advance Amount</label>
+            <input type="number" class="form-control" id="advanceAmount" placeholder="Enter amount if any advance paid" oninput="calculateAmount()">
+        </div>
+    </div>
 
+    <div style=" margin-top: 24px; background-color: rgb(171, 230, 174); padding: 16px;">
+        <h6 id="billingAmountcalc">Billing Amount:</h6>
+        <h6 id="pendingAmountCalc">Pending Amount:</h6>
     </div>
 
     <div style=" margin-top: 24px; ">
