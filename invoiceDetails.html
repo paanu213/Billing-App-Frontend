@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <title>Billing App</title>
+</head>
+<body>
+    <nav class="navbar fixed-top navbar-expand-lg bg-primary"  data-bs-theme="dark" style="padding: 10px 24px;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="./index.html">Billing Soft</a>
+            
+            <button class="navbar-toggler border-0" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="./index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="./invoices.html">Invoices</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./services.html">Services</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+     <!-- nav bar end -->
+
+
+     <div style=" margin: 96px 32px 0px 32px; display: flex; align-items: center;">
+        <a href="./invoices.html" style=" display: flex; height: 40px; width: 80px; justify-content: center; align-items: center; padding: 16px; " class="btn btn-light btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg>
+            Back
+        </a>
+        <div style="padding-left: 32px;">
+        <h4 id="invoiceId"> Invoice:</h4>
+     </div>
+     </div>
+
+     <div style="background-color: rgb(226, 243, 249); margin: 16px 32px; padding: 24px; display: flex; border-radius: 16px; " class="row">
+     <div class="col-6">
+        <p id="invoiceDate">invoice created on:</p>
+        <h5 id="customerName" style="font-weight: 700; font-family: Helvetica, sans-serif;">Customer Name</h5>
+        <h6 id="mobileNumber">Mobile Number</h6>
+     </div>
+     <div class="col-6 ">
+        <p id="status">Status</p>
+        <h3 id="pendingAmount">Pending Amount</h3>
+     </div>
+     </div>
+
+     <div style="border: solid bisque; margin: 16px 32px; padding: 24px; display: flex; border-radius: 16px;" class="row">
+        <div  class="col-4">
+            <p id="invoiceBillAmount">Bill Amount:</p>
+            <p id="discount"></p>
+            
+        </div>
+        <div  class="col-4">
+            <p id="afterDiscount"></p>
+            <p id="gst"></p>
+        </div>
+        <div class="col-4">
+            <p id="finalAmount">Final Amount:</p>
+            <p id="advancePaid"> </p>
+        </div>
+     </div>
+
+     <div id="additionalPaymentsTable" style="padding: 10px 24px; margin: 32px;" >
+        <div >
+            <h4>
+                Additional Payments
+            </h4>
+            <p id="totalAdditionalPayments" style="color: green;"></p>
+        </div>
+        <table class="table table-striped" >
+            <thead>
+                <tr>
+                    <th>Sl.no</th>
+                    <th>Date</th>
+                    <th>Amount Paid</th>
+                </tr>
+            </thead>
+            <tbody id="aditionalPaymentsTableBody">
+
+            </tbody>
+        </table>
+        
+     </div>
+     
+
+
+     
+
+
+
+
+    <script src="./script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

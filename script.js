@@ -189,7 +189,7 @@ const createInvoice = async ()=>{
 
 
     try{
-        const response = await fetch ('http://localhost:5000/invoice/create-invoice', {
+        const response = await fetch ('http://localhost:5000/invoices/create-invoice', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
@@ -262,7 +262,7 @@ const calculateAmount = async ()=>{
 //get invoice list and show to user
 const getInvoiceList = async ()=>{
     try{
-        const response = await fetch ('http://localhost:5000/invoice/invoice-list')
+        const response = await fetch ('http://localhost:5000/invoices/invoice-list')
 
         const invoiceList = await response.json()
 
@@ -274,7 +274,7 @@ const getInvoiceList = async ()=>{
         invoiceList.forEach((invoice, index)=>{
             const row = `
             <tr>
-                <td>${index+1}</td>
+                <td>${invoice.id}</td>
                 <td>${new Date(invoice.eventStartDate).toLocaleDateString()}</td>
                 <td> ${invoice.customerName} </td>
                 <td> ${invoice.mobileNumber} </td>
@@ -285,7 +285,7 @@ const getInvoiceList = async ()=>{
                 <td>
                 
                 <div class="dropdown">
-                <button type="button" class="btn btn-primary btn-sm"> View </button>
+                <a type="button" class="btn btn-primary btn-sm" href="./invoiceDetails.html?id=${invoice.id}"> View </a>
                 <button class="btn btn-sm text-secondary border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px">
                 <path d="M12 3C11.175 3 10.5 3.675 10.5 4.5C10.5 5.325 11.175 6 12 6C12.825 6 13.5 5.325 13.5 4.5C13.5 3.675 12.825 3 12 3ZM12 18C11.175 18 10.5 18.675 10.5 19.5C10.5 20.325 11.175 21 12 21C12.825 21 13.5 20.325 13.5 19.5C13.5 18.675 12.825 18 12 18ZM12 10.5C11.175 10.5 10.5 11.175 10.5 12C10.5 12.825 11.175 13.5 12 13.5C12.825 13.5 13.5 12.825 13.5 12C13.5 11.175 12.825 10.5 12 10.5Z"></path>
@@ -346,7 +346,7 @@ const saveAdditionalPayment = async ()=>{
         amount: Number(document.getElementById('additionalPaymentAmount').value)
     }
     try{
-        const response = await fetch(`http://localhost:5000/invoice/update-payment/${Id}`, {
+        const response = await fetch(`http://localhost:5000/invoices/update-payment/${Id}`, {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(additionalPaymentData)
@@ -365,3 +365,79 @@ const saveAdditionalPayment = async ()=>{
         console.error('message', error)
     }
 }
+
+
+const getInvoiceDetails = async (id)=>{
+
+    try{
+        const response = await fetch(`http://localhost:5000/invoices/invoice/${id}`)
+
+        const data = await response.json()
+
+         const invoiceId = document.getElementById('invoiceId')
+        const invoiceDate = document.getElementById('invoiceDate')
+        const customerName = document.getElementById('customerName')
+        const mobileNumber = document.getElementById('mobileNumber')
+
+        const status = document.getElementById('status')
+        const pendingAmount = document.getElementById('pendingAmount')
+        const totalAmount = document.getElementById('totalAmount')
+
+        const invoiceBillAmount = document.getElementById('invoiceBillAmount')
+        const discount = document.getElementById('discount')
+        const afterDiscount = document.getElementById('afterDiscount')
+        const gst = document.getElementById('gst')
+        const finalAmount = document.getElementById('finalAmount')
+        const advancePaid = document.getElementById('advancePaid')
+        const totalAdditionalPayments = document.getElementById('totalAdditionalPayments')
+
+        const aditionalPaymentsTableBody = document.getElementById('aditionalPaymentsTableBody')
+        aditionalPaymentsTableBody.innerHTML = ""
+
+        invoiceId.innerText = `Invoice no: ${data.id} `
+        invoiceDate.innerText =  `Created on: ${new Date (data.createdAt).toLocaleDateString()}`
+        customerName.innerText = `Customer Name: ${data.customerName}`
+        mobileNumber.innerText = `Mobile Number: ${data.mobileNumber}`
+
+        status.innerText = `Status: ${data.status}`
+        pendingAmount.innerText = `Pending Amount: ${data.pendingAmount}`
+        // totalAmount.innerText = `TotaL Bill Amount: ${data.billAmount}`
+
+        invoiceBillAmount.innerText = `Bill Amount: ${data.eventAmount}`
+        discount.innerText = `Discount: ${data.eventDiscount}`
+
+        const afterDiscountAmount = data.eventAmount - data.eventDiscount
+        afterDiscount.innerText = `After Discount: ${afterDiscountAmount}`
+        gst.innerText = `GST (${data.gstPercentage}%) : ${data.gstAmount}`
+        finalAmount.innerText = `Final Amount: ${data.billAmount}`
+        advancePaid.innerText = `Advance Paid: ${data.advancePaid}`
+        totalAdditionalPayments.innerText = `Additional Payments Total: ${data.totalAdditionalPayment}`
+
+        
+        data.additionalPayments.forEach((payments, index)=>{
+            const paymentsData = `
+            <tr>
+            <td>${index+1}</td>
+            <td>${new Date(payments.paymentDate).toLocaleDateString()}</td>
+            <td>${payments.amount}</td>
+            </tr>
+            `
+            aditionalPaymentsTableBody.innerHTML += paymentsData
+        })
+
+
+    }
+    catch(error){
+        console.log(`error: ${error}`)
+    }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id')
+
+    if(id){
+        getInvoiceDetails(id)
+    }
+    
+})
