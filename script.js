@@ -1,3 +1,6 @@
+// localStorage.setItem('token', data.token);
+
+
 const addService = async ()=>{
     const service = {};
     service.name = document.getElementById('serviceNameInput').value
@@ -6,7 +9,7 @@ const addService = async ()=>{
     //send and save data to backend
     const response = await fetch('http://localhost:5000/services/add-service', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}`},
         body: JSON.stringify(service)
     })
 
@@ -24,7 +27,9 @@ const getServicesList = async ()=>{
 
     try{
         //get data from backend
-        const response = await fetch('http://localhost:5000/services/services-list')
+        const response = await fetch('http://localhost:5000/services/services-list', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`}
+        })
 
         const servicesList = await response.json()
 
@@ -61,7 +66,11 @@ const deleteService = async (id)=>{
 
     try{
         const response = await fetch (`http://localhost:5000/services/delete-service/${id}`,{
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+            
         });
 
         if(response.ok){
@@ -98,6 +107,9 @@ if (startDateInput && endDateInput) {
 
 //Invoice creation
 const createInvoice = async ()=>{
+
+    const token = localStorage.getItem('token');
+
     const data = {};
     data.customerName = document.getElementById('customerName').value
     data.mobileNumber = document.getElementById('mobileNumber').value
@@ -189,28 +201,46 @@ const createInvoice = async ()=>{
 
 
     try{
+
+        const token = localStorage.getItem('token');
+
+        if(!token){
+            alert('Please login first');
+            return
+        }
+
         const response = await fetch ('http://localhost:5000/invoices/create-invoice', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},  
             body: JSON.stringify(data)
         })
 
-        console.log(data)
+
+        if(!response.ok){
+            const errorData = await response.json();
+            invoiceCreationSuccessMessage.innerText = errorData.message
+            return
+        }
 
          const responseData = await response.json();
+
+         console.log("FULL RESPONSE:", responseData);
+
          const invoiceId = responseData.response.invoiceId;
          const customerName = responseData.response.customerName;
          const billAmount = responseData.response.billAmount;
+         
 
          const invoiceCreationSuccessMessage = document.getElementById('invoiceCreationSuccessMessage')
          invoiceCreationSuccessMessage.innerText =  "Invoice Created Successfully"
 
          lastCreatedInvoiceDetails.innerText = `Inoice id: ${invoiceId} 
                                                 Customer Name: ${customerName} 
-                                                Bill Amount: ${billAmount}`
+                                                Bill Amount: ${finalAmount}
+                                                Pedning Amount: ${pendingAmount}`
     }
     catch(error){
-        console.error(`message: ${error}`)
+        console.error(error.message)
     }
 
     document.getElementById('invoiceForm').reset()
@@ -261,9 +291,24 @@ const calculateAmount = async ()=>{
 
 //get invoice list and show to user
 const getInvoiceList = async ()=>{
-    try{
-        const response = await fetch ('http://localhost:5000/invoices/invoice-list')
+    const token = localStorage.getItem('token');
 
+    if(!token){
+        alert('please login')
+        window.location.replace('./login.html')
+        return
+    }
+
+    try{
+        const response = await fetch ('http://localhost:5000/invoices/invoice-list',
+            { headers: { Authorization: `Bearer ${token}` }
+        } )
+
+        if(!response.ok){
+            const error = await response.json()
+            alert(error.message)
+        }
+        
         const invoiceList = await response.json()
 
         //targetting table body and making the table data empty before showing, to avoid duplicates
@@ -312,7 +357,7 @@ const getInvoiceList = async ()=>{
         })
     }
     catch (error){
-        console.log(`there is an error: ${error}`)
+        console.log(error.message)
     }
 }
 
@@ -348,7 +393,7 @@ const saveAdditionalPayment = async ()=>{
     try{
         const response = await fetch(`http://localhost:5000/invoices/update-payment/${Id}`, {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}`},
             body: JSON.stringify(additionalPaymentData)
         })
 
@@ -441,3 +486,60 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
     
 })
+
+
+//login to application
+
+const login = async (event)=>{
+
+    event.preventDefault(); 
+
+    const email = document.getElementById('loginEmail').value
+    const password = document.getElementById('password').value
+    const loginErrorMessage = document.getElementById('loginErrorMessage')
+    const passwordHelp = document.getElementById('passwordHelp')
+
+    const emailHelp = document.getElementById('emailHelp')
+
+    if(!email){
+        emailHelp.innerText = "Email id is required"
+        return
+        }
+
+    if(!password){
+        passwordHelp.innerText = "Password is required"
+        return
+        }
+
+    try{
+        
+        const response = await fetch ('http://localhost:5000/auth/login',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email, password})
+        })
+
+        const data = await response.json()
+
+        if(response.ok){
+            localStorage.setItem('token', data.token)
+            if(localStorage.getItem('token')){
+                window.location.replace('./index.html')
+            }
+            console.log(data.token)
+        } else {
+            loginErrorMessage.innerText = data.message || 'Login Failed'
+        }
+        }
+    catch (error){
+        console.log(error.message)
+    }
+}
+
+
+const logOut = async ()=>{
+    localStorage.removeItem('token')
+    window.location.href = './login.html'
+}

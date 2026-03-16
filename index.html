@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <title>Billing App</title>
+    <script>
+    if (!localStorage.getItem('token')) {
+    window.location.href = './login.html'; // Redirect back if not logged in
+}
+    </script>
 </head>
 <body>
     <!-- nav bar -->
@@ -31,6 +36,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="./services.html">Services</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" type="button" onclick="logOut()">Log Out</a>
                     </li>
                 </ul>
             </div>
@@ -107,13 +115,13 @@
         <div style="width: 50%; margin-top: 24px; background-color: rgb(171, 222, 174); padding: 16px;">
             <h6> Final Amount Calculation:</h6>
             <div style="margin-top: 0px;">
-                <h6 id="billAmount">Amount:</h6>
-                <h6 id="discountAmount">Discount:</h6>
-                <h6 id="afterDiscount">After Discount</h6>
-                <h6 id="gstAmount">GST Amount:</h6>
-                <h6 id="finalAmount">FinalAmount:</h6>
-                <h6 id="advanceAmountPaid">Advance paid:</h6>
-                <h6 id="pendingAmount">Pending Amount:</h6>
+                <p id="billAmount" style="line-height: 10px; font-size: 14px;">Amount:<p>
+                <p id="discountAmount" style="line-height: 10px; font-size: 14px;">Discount:</p>
+                <p id="afterDiscount" style="line-height: 10px; font-size: 14px;">After Discount</p>
+                <p id="gstAmount" style="line-height: 10px; font-size: 14px;">GST Amount:</p>
+                <p id="finalAmount" style="line-height: 10px; font-size: 14px;">FinalAmount:</p>
+                <p id="advanceAmountPaid" style="line-height: 10px; font-size: 14px;">Advance paid:</p>
+                <p id="pendingAmount" style="line-height: 10px; font-size: 14px;">Pending Amount:</p>
             </div>
             
 
