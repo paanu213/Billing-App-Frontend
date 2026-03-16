@@ -28,7 +28,7 @@ const getServicesList = async ()=>{
     try{
         //get data from backend
         const response = await fetch('http://localhost:5000/services/services-list', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`}
+            headers: { Authorization: `Bearer ${token}`}
         })
 
         const servicesList = await response.json()
@@ -224,11 +224,10 @@ const createInvoice = async ()=>{
 
          const responseData = await response.json();
 
-         console.log("FULL RESPONSE:", responseData);
-
          const invoiceId = responseData.response.invoiceId;
          const customerName = responseData.response.customerName;
-         const billAmount = responseData.response.billAmount;
+         const finalAmount = responseData.response.billAmount;
+         const pendingAmount = responseData.response.pendingAmount;
          
 
          const invoiceCreationSuccessMessage = document.getElementById('invoiceCreationSuccessMessage')
@@ -323,7 +322,7 @@ const getInvoiceList = async ()=>{
                 <td>${new Date(invoice.eventStartDate).toLocaleDateString()}</td>
                 <td> ${invoice.customerName} </td>
                 <td> ${invoice.mobileNumber} </td>
-                <td> ${Number(invoice.billAmount)} </td>
+                <td> ${Number(invoice.finalAmount)} </td>
                 <td> ${Number(invoice.pendingAmount)} </td>
                 <td> ${invoice.finalAmountCleared} </td>
 
@@ -351,7 +350,7 @@ const getInvoiceList = async ()=>{
             invoiceTableBody.innerHTML += row
 
             const dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-        dropdownElementList.map(function (dropdownToggleEl) {
+            dropdownElementList.map(function (dropdownToggleEl) {
             return new bootstrap.Dropdown(dropdownToggleEl);
         });
         })
@@ -372,7 +371,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 //Additional payment model open
 const openPaymentModel = (id)=>{
-    document.getElementById('invoiceId').value = id;
+    document.getElementById('InvoiceId').value = id;
+    console.log(id)
     // Format today's date to YYYY-MM-DD
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('additionalPaymentDate').value = today;
@@ -385,15 +385,25 @@ const openPaymentModel = (id)=>{
 
 //additional Payment Adding to record and saving in backend, updating in frontend.
 const saveAdditionalPayment = async ()=>{
-    const Id = document.getElementById('invoiceId').value
-    const additionalPaymentData = {
-        date: document.getElementById('additionalPaymentDate').value,
-        amount: Number(document.getElementById('additionalPaymentAmount').value)
-    }
+
+    const token = localStorage.getItem('token')
+
+    const id = document.getElementById('InvoiceId').value
+    const additionalPaymentData = {};
+
+    additionalPaymentData.date = document.getElementById('additionalPaymentDate').value,
+    additionalPaymentData.amount= Number(document.getElementById('additionalPaymentAmount').value)
+
+    const saveActionMessage = document.getElementById('saveActionMessage')
+
+        if (!additionalPaymentData.amount || additionalPaymentData.amount<0 ){
+            saveActionMessage.innerText = 'please enter valid amount'
+            return
+        }
     try{
-        const response = await fetch(`http://localhost:5000/invoices/update-payment/${Id}`, {
+        const response = await fetch(`http://localhost:5000/invoices/update-payment/${id}`, {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}`},
+            headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
             body: JSON.stringify(additionalPaymentData)
         })
 
@@ -402,6 +412,10 @@ const saveAdditionalPayment = async ()=>{
             const modalElement = document.getElementById('paymentModal');
             const modalInstance = bootstrap.Modal.getInstance(modalElement);
             modalInstance.hide();
+
+            if (id){
+                getInvoiceDetails(id)
+            }
 
             getInvoiceList()
         }
@@ -414,12 +428,23 @@ const saveAdditionalPayment = async ()=>{
 
 const getInvoiceDetails = async (id)=>{
 
+    const token = localStorage.getItem('token');
+
+    if(!token){
+        window.location.replace('./login.html')
+    }
+
     try{
-        const response = await fetch(`http://localhost:5000/invoices/invoice/${id}`)
+        const response = await fetch(`http://localhost:5000/invoices/invoice/${id}`,
+            {headers: {Authorization: `Bearer ${token}`}
+        })
 
         const data = await response.json()
 
-         const invoiceId = document.getElementById('invoiceId')
+         console.log("response from backend:", data)
+
+        const invoiceIdSpan = document.getElementById('invoiceIdSpan')
+
         const invoiceDate = document.getElementById('invoiceDate')
         const customerName = document.getElementById('customerName')
         const mobileNumber = document.getElementById('mobileNumber')
@@ -439,10 +464,10 @@ const getInvoiceDetails = async (id)=>{
         const aditionalPaymentsTableBody = document.getElementById('aditionalPaymentsTableBody')
         aditionalPaymentsTableBody.innerHTML = ""
 
-        invoiceId.innerText = `Invoice no: ${data.id} `
         invoiceDate.innerText =  `Created on: ${new Date (data.createdAt).toLocaleDateString()}`
         customerName.innerText = `Customer Name: ${data.customerName}`
         mobileNumber.innerText = `Mobile Number: ${data.mobileNumber}`
+        invoiceIdSpan.innerText = `${id}`
 
         status.innerText = `Status: ${data.status}`
         pendingAmount.innerText = `Pending Amount: ${data.pendingAmount}`
@@ -454,7 +479,7 @@ const getInvoiceDetails = async (id)=>{
         const afterDiscountAmount = data.eventAmount - data.eventDiscount
         afterDiscount.innerText = `After Discount: ${afterDiscountAmount}`
         gst.innerText = `GST (${data.gstPercentage}%) : ${data.gstAmount}`
-        finalAmount.innerText = `Final Amount: ${data.billAmount}`
+        finalAmount.innerText = `Final Amount: ${data.finalAmount}`
         advancePaid.innerText = `Advance Paid: ${data.advancePaid}`
         totalAdditionalPayments.innerText = `Additional Payments Total: ${data.totalAdditionalPayment}`
 
@@ -470,10 +495,12 @@ const getInvoiceDetails = async (id)=>{
             aditionalPaymentsTableBody.innerHTML += paymentsData
         })
 
+       
+
 
     }
     catch(error){
-        console.log(`error: ${error}`)
+        console.log(error.message)
     }
 }
 
@@ -543,3 +570,118 @@ const logOut = async ()=>{
     localStorage.removeItem('token')
     window.location.href = './login.html'
 }
+
+
+
+//Company Register
+const companyRegister = async ()=>{
+
+    const token = localStorage.getItem('token');
+
+    // event.preventDefault(); 
+
+    const companyDetails = {}
+    companyDetails.companyName = document.getElementById('companyName').value
+    companyDetails.name = document.getElementById('userName').value
+    companyDetails.email = document.getElementById('email').value
+    companyDetails.password = document.getElementById('password').value
+    // companyDetails.companyLogo = document.getElementById('companyLogo').value
+
+    const registerResponsemessage = document.getElementById('registerResponsemessage')
+
+    console.log(companyDetails)
+    console.log(token)
+
+    try{
+        const response = await fetch('http://localhost:5000/auth/register',{
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(companyDetails)
+        } )
+
+        if(!response.ok){
+            const errorData = await response.json()
+            registerResponsemessage.innerText = errorData.message;
+            return
+        }
+
+        const data = await response.json()
+        registerResponsemessage.innerText = data.message;
+        console.log(data.message)
+        
+        document.getElementById('companyName').value = ""
+        document.getElementById('userName').value = ""
+        document.getElementById('email').value = ""
+        document.getElementById('password').value = ""
+        
+    }
+    catch(error){
+        console.log(error.message)
+    }
+}
+
+//companies List get
+const getCompaniesList = async ()=>{
+    try{
+        const response = await fetch ('http://localhost:5000/companies/companiesList')
+        const companiesList = await response.json()
+
+        const companiesListTableBody = document.getElementById('companiesListTableBody')
+        companiesListTableBody.innerHTML = ""
+
+        companiesList.forEach((data, index)=>{
+            const companiesRow = `
+            <tr>
+            <td>${index+1} </td>
+            <td>${data.company_name}</td>
+            <td>${data.created_at}</td>
+            <td>
+            <a>View</a>
+            <button class="btn btn-sm text-secondary border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px">
+                    <path d="M12 3C11.175 3 10.5 3.675 10.5 4.5C10.5 5.325 11.175 6 12 6C12.825 6 13.5 5.325 13.5 4.5C13.5 3.675 12.825 3 12 3ZM12 18C11.175 18 10.5 18.675 10.5 19.5C10.5 20.325 11.175 21 12 21C12.825 21 13.5 20.325 13.5 19.5C13.5 18.675 12.825 18 12 18ZM12 10.5C11.175 10.5 10.5 11.175 10.5 12C10.5 12.825 11.175 13.5 12 13.5C12.825 13.5 13.5 12.825 13.5 12C13.5 11.175 12.825 10.5 12 10.5Z"></path>
+                </svg>
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href=""><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onClick = "openPaymentModel('${data.id}')"><i class="bi bi-cash me-2"></i>Make Inactive</a>
+                </li><li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="#">Soft Delete</a></li>
+            </ul>
+            </td>
+            </tr>
+            `
+
+            companiesListTableBody.innerHTML += companiesRow
+
+            const dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+            dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);})
+        })
+    }
+    catch (error){
+        console.log(error.message)
+    }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    const companiesListTableBody = document.getElementById('companiesListTableBody');
+    if(companiesListTableBody){
+        getCompaniesList()
+    }
+})
+
+const openCompanyRegisterModel = ()=>{
+    const pModal = new bootstrap.Modal(document.getElementById('companyRegisterModel'));
+    pModal.show();
+}
+
+// const menuIteams = async ()=>{
+//     if(user.role !== 'super_Admin'){
+
+//     }
+// }

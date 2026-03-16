@@ -40,15 +40,63 @@
     </nav>
      <!-- nav bar end -->
 
+     <!-- model ( pop up ) to add additional payments -->
+    <div class="modal  fade" tabindex="-1" id="paymentModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Aditional Payments Recieved</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="InvoiceId" type="hidden">
+                    
+                    <div class="mb-3">
+                        <lable class="form-label">select date</lable>
+                        <input type="date" id="additionalPaymentDate" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <lable class="form-label">Amount Recieved</lable>
+                        <input type="number" id="additionalPaymentAmount" class="form-control" placeholder="Enter recieved amount">
+                        <p id="saveActionMessage" style="color: brown;"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAdditionalPayment()">Save Payment</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
 
-     <div style=" margin: 96px 32px 0px 32px; display: flex; align-items: center;">
-        <a href="./invoices.html" style=" display: flex; height: 40px; width: 80px; justify-content: center; align-items: center; padding: 16px; " class="btn btn-light btn-sm">
+
+    <!-- invoice details -->
+    <div style=" margin: 96px 32px 0px 32px; display: flex; align-items: center; justify-content: space-between;">
+        
+        <div style="padding-left: 32px; display: flex; align-items: center; gap: 16px;" >
+            <a href="./invoices.html" style=" display: flex; height: 40px; width: 80px; justify-content: center; align-items: center; padding: 16px; " class="btn btn-light btn-sm">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg>
             Back
-        </a>
-        <div style="padding-left: 32px;">
-        <h4 id="invoiceId"> Invoice:</h4>
-     </div>
+            </a>
+            <h4> Invoice: <span id="invoiceIdSpan"></span> </h4>
+        </div>
+        <div>
+            <div class="dropdown">
+                <button class="btn btn-sm text-secondary border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px">
+                <path d="M12 3C11.175 3 10.5 3.675 10.5 4.5C10.5 5.325 11.175 6 12 6C12.825 6 13.5 5.325 13.5 4.5C13.5 3.675 12.825 3 12 3ZM12 18C11.175 18 10.5 18.675 10.5 19.5C10.5 20.325 11.175 21 12 21C12.825 21 13.5 20.325 13.5 19.5C13.5 18.675 12.825 18 12 18ZM12 10.5C11.175 10.5 10.5 11.175 10.5 12C10.5 12.825 11.175 13.5 12 13.5C12.825 13.5 13.5 12.825 13.5 12C13.5 11.175 12.825 10.5 12 10.5Z"></path>
+                </svg>
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href=""><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onClick = "openPaymentModel(document.getElementById('invoiceIdSpan').innerText)"><i class="bi bi-cash me-2"></i>Received Amount</a>
+                </li><li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                </ul>
+            </div>
+        </div>
      </div>
 
      <div style="background-color: rgb(226, 243, 249); margin: 16px 32px; padding: 24px; display: flex; border-radius: 16px; " class="row">
@@ -66,15 +114,14 @@
      <div style="border: solid bisque; margin: 16px 32px; padding: 24px; display: flex; border-radius: 16px;" class="row">
         <div  class="col-4">
             <p id="invoiceBillAmount">Bill Amount:</p>
-            <p id="discount"></p>
-            
-        </div>
-        <div  class="col-4">
-            <p id="afterDiscount"></p>
             <p id="gst"></p>
         </div>
-        <div class="col-4">
+        <div  class="col-4">
+            <p id="discount"></p>
             <p id="finalAmount">Final Amount:</p>
+        </div>
+        <div class="col-4">
+            <p id="afterDiscount"></p>
             <p id="advancePaid"> </p>
         </div>
      </div>

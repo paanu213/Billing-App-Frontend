@@ -37,6 +37,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="./services.html">Services</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./registerCompany.html">Register</a>
+                    </li>
                     <li>
                         <a class="nav-link" type="button" onclick="logOut()">Log Out</a>
                     </li>
@@ -75,17 +78,17 @@
         <label for="billingName">Event start date</label>
         <input type="date" class="form-control" id="eventStartDate" placeholder="Select event start date">
         <p id="eventStartDateErrorMessage" style="color: brown;"> </p>
-    </div>
+        </div>
     <div class="form-group col-md-4">
         <label for="mobileNumber">Event end date</label>
         <input type="date" class="form-control" id="eventEndDate" placeholder="Select event end date">
         <p id="eventEndDateErrorMessage" style="color: brown;"> </p>
-    </div>
+        </div>
     <div class="form-group col-md-4">
         <label for="eventAmount">Price</label>
         <input type="number" class="form-control" id="eventAmount" placeholder="Enter Amount" oninput="calculateAmount()">
         <p id="eventAmountErrorMessage" style="color: brown;"> </p>
-    </div>
+        </div>
     </div>
 
     <div style=" margin-top: 24px; " class="row">
